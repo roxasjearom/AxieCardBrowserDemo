@@ -9,8 +9,9 @@ import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.repositor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class CardRepositoryImpl(
+class CardRepositoryImpl @Inject constructor(
     private val remoteDataSource: CardRemoteDataSource,
     private val localDataSource: CardLocalDataSource,
 ) : CardRepository {

@@ -5,12 +5,14 @@ import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.repositor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(ViewModelComponent::class)
 abstract class RepositoryModule {
 
+    @ViewModelScoped
     @Binds
     abstract fun bindCardRepository(impl: CardRepositoryImpl): CardRepository
 }

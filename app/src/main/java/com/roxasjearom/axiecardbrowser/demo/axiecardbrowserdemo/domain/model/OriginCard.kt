@@ -11,4 +11,5 @@ data class OriginCard(
     val cardType: String,
     val cardClass: String,
     val tags: String,
+    val partType: String,
 )

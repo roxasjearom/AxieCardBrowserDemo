@@ -12,6 +12,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.databinding.FragmentCardBinding
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.CardClass
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.CardClassFilter
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.PartType
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.PartTypeFilter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -45,6 +49,7 @@ class CardFragment : Fragment() {
             layoutManager = GridLayoutManager(requireContext(), 2)
         }
         setObserver()
+        setBottomSheetFilters()
     }
 
     private fun setObserver() {
@@ -69,6 +74,54 @@ class CardFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun setBottomSheetFilters() {
+        with(binding.bottomSheetFilters) {
+            chipAqua.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.AQUATIC.name, CardClass.AQUATIC))
+            }
+            chipBeast.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.BEAST.name, CardClass.BEAST))
+            }
+            chipBird.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.BIRD.name, CardClass.BIRD))
+            }
+            chipBug.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.BUG.name, CardClass.BUG))
+            }
+            chipPlant.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.PLANT.name, CardClass.PLANT))
+            }
+            chipReptile.setOnClickListener {
+                viewModel.filterCards(CardClassFilter(CardClass.REPTILE.name, CardClass.REPTILE))
+            }
+
+            chipEars.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.EARS.name, PartType.EARS))
+            }
+            chipEyes.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.EYES.name, PartType.EYES))
+            }
+            chipBack.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.BACK.name, PartType.BACK))
+            }
+            chipMouth.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.MOUTH.name, PartType.MOUTH))
+            }
+            chipHorn.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.HORN.name, PartType.HORN))
+            }
+            chipTail.setOnClickListener {
+                viewModel.filterCards(PartTypeFilter(PartType.TAIL.name, PartType.TAIL))
+            }
+
+            clearButton.setOnClickListener {
+                viewModel.clearFilters()
+                classChipGroup.clearCheck()
+                bodyPartsChipGroup.clearCheck()
             }
         }
     }

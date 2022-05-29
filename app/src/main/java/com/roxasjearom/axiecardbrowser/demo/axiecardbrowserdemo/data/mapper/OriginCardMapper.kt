@@ -32,4 +32,5 @@ fun OriginCardEntity.toOriginCard() = OriginCard(
     cardType = cardType,
     cardClass = cardClass,
     tags = tags,
+    partType = partType,
 )

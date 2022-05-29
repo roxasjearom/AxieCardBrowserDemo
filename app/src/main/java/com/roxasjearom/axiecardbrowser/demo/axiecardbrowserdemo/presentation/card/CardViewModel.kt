@@ -2,7 +2,7 @@ package com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.presentation.ca
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.OriginCard
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.*
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.repository.CardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -22,6 +22,8 @@ class CardViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000)
     )
+
+    private val cardFilters = mutableListOf<CardFilter>()
 
     init {
         fetchOriginData()
@@ -66,6 +68,79 @@ class CardViewModel @Inject constructor(
     fun messageShown() {
         _cardsUiState.update { uiState ->
             uiState.copy(message = null)
+        }
+    }
+
+    fun filterCards(newFilter: CardFilter) {
+        viewModelScope.launch {
+            updateFilters(newFilter, cardFilters)
+
+            val filteredCards =
+                if (cardFilters.isEmpty()) {
+                    completeCards
+                } else {
+                    val filteredList = mutableListOf<OriginCard>()
+                    completeCards.filter { card ->
+                        isCardValid(card, cardFilters)
+                    }.forEach { validCard ->
+                        filteredList.add(validCard)
+                    }
+                    filteredList
+                }
+            _cardsUiState.update { currentUiState ->
+                currentUiState.copy(
+                    cards = filteredCards,
+                    hasFilter = cardFilters.isNotEmpty(),
+                )
+            }
+        }
+    }
+
+    private fun updateFilters(
+        newFilter: CardFilter,
+        filterList: MutableList<CardFilter>
+    ) {
+        val filter = when (newFilter) {
+            is CardClassFilter -> CardClassFilter(newFilter.id, newFilter.cardClass)
+            is PartTypeFilter -> PartTypeFilter(newFilter.id, newFilter.partType)
+        }
+        val item = filterList.find { it.id == filter.id }
+        if (filterList.contains(item)) {
+            filterList.remove(item)
+        } else {
+            filterList.add(filter)
+        }
+    }
+
+    private fun isCardValid(card: OriginCard, filterList: MutableList<CardFilter>): Boolean {
+        val booleanList = mutableListOf<Boolean>()
+
+        for (filter in filterList) {
+            when (filter) {
+                is CardClassFilter -> {
+                    booleanList.add(
+                        filterList.filterIsInstance<CardClassFilter>()
+                            .any { it.cardClass == card.cardClass.toCardClass() }
+                    )
+                }
+                is PartTypeFilter -> {
+                    booleanList.add(
+                        filterList.filterIsInstance<PartTypeFilter>()
+                            .any { it.partType == card.partType.toPartType() }
+                    )
+                }
+            }
+        }
+        return booleanList.all { it }
+    }
+
+    fun clearFilters() {
+        cardFilters.clear()
+        _cardsUiState.update { currentUiState ->
+            currentUiState.copy(
+                cards = completeCards,
+                hasFilter = false,
+            )
         }
     }
 }

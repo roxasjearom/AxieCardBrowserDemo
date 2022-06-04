@@ -5,7 +5,7 @@ import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.Car
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.CardClassFilter
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.PartType
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.PartTypeFilter
-import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.presentation.MainDispatcherRule
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -19,11 +19,13 @@ class CardViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private val dispatcherProvider = TestDispatcherProvider(mainDispatcherRule.testDispatcher)
+
     private lateinit var cardViewModel: CardViewModel
 
     @Before
     fun setup() {
-        cardViewModel = CardViewModel(FakeCardRepository())
+        cardViewModel = CardViewModel(FakeCardRepository(), dispatcherProvider)
     }
 
     @Test

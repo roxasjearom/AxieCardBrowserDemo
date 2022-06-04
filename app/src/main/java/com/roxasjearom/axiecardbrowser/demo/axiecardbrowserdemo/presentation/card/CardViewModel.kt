@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.model.*
 import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.domain.repository.CardRepository
+import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.utils.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,6 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CardViewModel @Inject constructor(
     private val cardRepository: CardRepository,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private var completeCards = emptyList<OriginCard>()
@@ -65,14 +67,8 @@ class CardViewModel @Inject constructor(
         }
     }
 
-    fun messageShown() {
-        _cardsUiState.update { uiState ->
-            uiState.copy(message = null)
-        }
-    }
-
     fun filterCards(newFilter: CardFilter) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.io) {
             updateFilters(newFilter, cardFilters)
 
             val filteredCards =
@@ -141,6 +137,12 @@ class CardViewModel @Inject constructor(
                 cards = completeCards,
                 hasFilter = false,
             )
+        }
+    }
+
+    fun messageShown() {
+        _cardsUiState.update { uiState ->
+            uiState.copy(message = null)
         }
     }
 }

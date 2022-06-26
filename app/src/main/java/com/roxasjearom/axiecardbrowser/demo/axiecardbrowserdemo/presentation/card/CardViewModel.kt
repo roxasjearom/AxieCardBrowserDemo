@@ -8,6 +8,7 @@ import com.roxasjearom.axiecardbrowser.demo.axiecardbrowserdemo.utils.Dispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Collections.emptyList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -75,13 +76,9 @@ class CardViewModel @Inject constructor(
                 if (cardFilters.isEmpty()) {
                     completeCards
                 } else {
-                    val filteredList = mutableListOf<OriginCard>()
                     completeCards.filter { card ->
                         isCardValid(card, cardFilters)
-                    }.forEach { validCard ->
-                        filteredList.add(validCard)
                     }
-                    filteredList
                 }
             _cardsUiState.update { currentUiState ->
                 currentUiState.copy(
